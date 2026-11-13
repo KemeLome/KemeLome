@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lome & Keme | عالمنا الخاص</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Tajawal & Cairo & Playfair Display & Noto Color Emoji -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@400;600;700;800&family=Noto+Color+Emoji&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Cairo', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'sans-serif'],
+                        serif: ['Amiri', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'serif'],
+                        english: ['Playfair Display', 'Noto Color Emoji', 'Apple Color Emoji', 'Segoe UI Emoji', 'serif']
+                    },
+                    colors: {
+                        forest: {
+                            50: '#f2f7f2',
+                            100: '#e0ece0',
+                            200: '#c2dac3',
+                            300: '#96bf98',
+                            400: '#649e68',
+                            500: '#3e7b36',
+                            600: '#2d5a27',
+                            700: '#1e4620',
+                            800: '#163518',
+                            900: '#0d210f',
+                            950: '#071408',
+                        },
+                        blossom: {
+                            50: '#fff0f5',
+                            100: '#fce4ec',
+                            200: '#f8bbd0',
+                            300: '#f48fb1',
+                            400: '#f06292',
+                            500: '#ec407a',
+                        },
+                        sunlight: {
+                            50: '#fffde7',
+                            100: '#fff9c4',
+                            200: '#fff59d',
+                            300: '#fff176',
+                            400: '#ffd54f',
+                            500: '#ffca28',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Animations & Forest Atmosphere */
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+        }
+        @keyframes fallPetal {
+            0% { transform: translateY(-10vh) translateX(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(110vh) translateX(40px) rotate(360deg); opacity: 0; }
+        }
+        @keyframes fireflyGlow {
+            0%, 100% { opacity: 0.2; transform: scale(0.8) translate(0, 0); }
+            50% { opacity: 1; transform: scale(1.2) translate(15px, -20px); }
+        }
+        @keyframes pulseHeart {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.15); }
+        }
+
+        .animate-float { animation: floatSlow 5s ease-in-out infinite; }
+        .animate-heartbeat { animation: pulseHeart 1.8s ease-in-out infinite; }
+
+        .falling-particle {
+            position: fixed;
+            top: -50px;
+            pointer-events: none;
+            z-index: 9999;
+            animation: fallPetal linear forwards;
+        }
+
+        .firefly {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ffd54f;
+            box-shadow: 0 0 12px 4px rgba(255, 213, 79, 0.7);
+            pointer-events: none;
+            z-index: 1;
+            animation: fireflyGlow 6s ease-in-out infinite;
+        }
+
+        /* Glassmorphism Cards */
+        .forest-glass {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(62, 123, 54, 0.2);
+        }
+        .dark .forest-glass {
+            background: rgba(13, 33, 15, 0.82);
+            border: 1px solid rgba(255, 213, 79, 0.18);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #e0ece0; }
+        .dark ::-webkit-scrollbar-track { background: #071408; }
+        ::-webkit-scrollbar-thumb { background: #3e7b36; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #2d5a27; }
+
+        /* Flip Card Effect */
+        .memory-card-inner {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-forest-50 via-blossom-50/40 to-sunlight-50/50 dark:from-forest-950 dark:via-forest-900 dark:to-forest-950 text-forest-900 dark:text-forest-50 min-h-screen transition-colors duration-500 pb-28">
+
+    <!-- Fireflies Container (Visible in Night Forest Mode) -->
+    <div id="firefliesContainer" class="hidden"></div>
+
+    <!-- ========================================== -->
+    <!-- 1. LOCK SCREEN GATE (بوابة الدخول واللغز) -->
+    <!-- ========================================== -->
+    <div id="lockScreen" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gradient-to-br from-forest-900 via-forest-800 to-forest-950 text-white overflow-y-auto">
+        <!-- Decorative Forest Leaves -->
+        <div class="absolute top-6 right-6 text-forest-400/20 text-7xl pointer-events-none"><i class="fa-solid fa-leaf"></i></div>
+        <div class="absolute bottom-6 left-6 text-blossom-300/20 text-7xl pointer-events-none"><i class="fa-solid fa-spa"></i></div>
+
+        <div class="max-w-md w-full bg-forest-900/90 backdrop-blur-xl border-2 border-sunlight-400/40 rounded-3xl p-7 sm:p-9 shadow-2xl text-center relative">
+            <div class="w-20 h-20 mx-auto mb-5 rounded-full bg-gradient-to-tr from-blossom-400 to-sunlight-300 p-1 shadow-lg animate-float">
+                <div class="w-full h-full bg-forest-900 rounded-full flex items-center justify-center text-3xl text-blossom-300">
+                    <i class="fa-solid fa-heart animate-heartbeat"></i>
+                </div>
+            </div>
+
+            <!-- Exact Quote Requested by User -->
+            <div class="bg-forest-800/80 border border-blossom-300/30 rounded-2xl p-4 mb-6 shadow-inner">
+                <p class="font-serif text-xl sm:text-2xl leading-relaxed text-sunlight-200 font-bold">
+                    "سلام روحي تذكري انا معك بكلشي وجواتك وبحبك روحي"
+                </p>
+            </div>
+
+            <!-- Riddle -->
+            <h2 class="text-lg sm:text-xl font-bold text-blossom-200 mb-2">
+                <i class="fa-solid fa-key text-sunlight-400 ml-1"></i> مفتاح عالمنا الخاص
+            </h2>
+            <p class="text-forest-200 text-sm sm:text-base mb-5 leading-relaxed">
+                السر اللي انولد بيناتنا بالخفاء... ايمت اعترفنا لبعض؟
+            </p>
+
+            <form id="unlockForm" class="space-y-4">
+                <div class="relative">
+                    <input type="text" id="passwordInput" placeholder="اكتبي التاريخ هون" autocomplete="off"
+                        class="w-full text-center text-lg font-bold tracking-wider py-3.5 px-4 rounded-2xl bg-forest-950/90 border-2 border-forest-500 focus:border-blossom-400 focus:outline-none text-sunlight-100 placeholder-forest-400 transition">
+                </div>
+                <p id="lockError" class="text-blossom-300 text-sm hidden font-semibold">
+                    <i class="fa-solid fa-circle-exclamation ml-1"></i> حاولي مرة تانية يا روحي.. تذكري يوم اعترافنا!
+                </p>
+                <button type="submit"
+                    class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-forest-500 via-forest-600 to-blossom-500 hover:from-forest-400 hover:to-blossom-400 text-white font-bold text-lg shadow-lg hover:shadow-blossom-500/25 transition transform active:scale-95">
+                    افتحي قلبي <i class="fa-solid fa-door-open mr-2"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. INSTANT WELCOME POP-UP (رسالة الترحيب)  -->
+    <!-- ========================================== -->
+    <div id="welcomeModal" class="fixed inset-0 z-40 hidden items-center justify-center p-4 bg-black/65 backdrop-blur-sm">
+        <div class="max-w-lg w-full forest-glass rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-blossom-300 dark:border-sunlight-400/50 relative transform transition-all">
+            <!-- Close X Button -->
+            <button onclick="closeWelcomeModal()" aria-label="إغلاق"
+                class="absolute top-4 left-4 w-10 h-10 rounded-full bg-blossom-100 dark:bg-forest-800 text-blossom-500 dark:text-blossom-300 hover:bg-blossom-200 flex items-center justify-center text-lg font-bold transition">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center">
+                <span class="inline-block px-4 py-1 rounded-full bg-sunlight-200/80 dark:bg-sunlight-400/20 text-forest-800 dark:text-sunlight-300 text-xs font-bold mb-3">
+                    <i class="fa-solid fa-sparkles ml-1"></i> رسالة خاصة إلِك بهاللحظة
+                </span>
+                <h3 id="welcomeNickname" class="text-2xl font-extrabold text-forest-700 dark:text-blossom-300 mb-4">
+                    إلى لومي، بنوتي وأميرتي...
+                </h3>
+                
+                <div class="bg-white/70 dark:bg-forest-950/70 rounded-2xl p-5 mb-6 border border-forest-200 dark:border-forest-700 shadow-inner">
+                    <p id="generatedLoveMessage" class="font-serif text-xl sm:text-2xl leading-relaxed text-forest-900 dark:text-forest-50">
+                        <!-- Generated dynamically -->
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-3 justify-center">
+                    <button onclick="generateNewLoveMessage()"
+                        class="py-3 px-5 rounded-2xl bg-sunlight-300 hover:bg-sunlight-400 text-forest-900 font-bold text-sm transition flex items-center justify-center gap-2 shadow">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i> بدي رسالة تانية
+                    </button>
+                    <button onclick="closeWelcomeModal()"
+                        class="py-3 px-6 rounded-2xl bg-gradient-to-r from-forest-600 to-blossom-500 hover:opacity-95 text-white font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg">
+                        وصلت لقلبي <i class="fa-solid fa-heart"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MAIN APP CONTAINER (المحتوى الرئيسي)      -->
+    <!-- ========================================== -->
+    <div id="mainContent" class="hidden max-w-5xl mx-auto px-4 pt-5 sm:pt-8 space-y-8">
+
+        <!-- TOP NAVIGATION BAR & CONTROLS -->
+        <header class="forest-glass rounded-3xl p-4 sm:px-6 flex flex-wrap items-center justify-between gap-3 shadow-md">
+            <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-forest-600 to-blossom-400 flex items-center justify-center text-white text-xl shadow">
+                    <i class="fa-solid fa-tree"></i>
+                </div>
+                <div>
+                    <h1 class="font-english font-bold text-xl sm:text-2xl text-forest-800 dark:text-sunlight-300 tracking-wide">
+                        Lome <span class="text-blossom-500">&</span> Keme
+                    </h1>
+                    <p class="text-xs text-forest-600 dark:text-forest-300">غابتنا الهادية وملاذنا الآمن</p>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 flex-wrap">
+                <!-- Identity Selector -->
+                <div class="flex items-center bg-forest-100 dark:bg-forest-800 rounded-2xl p-1 border border-forest-300 dark:border-forest-600">
+                    <button id="roleLomeBtn" onclick="setActiveUser('Lome')" class="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition">
+                        🌸 Lome
+                    </button>
+                    <button id="roleKemeBtn" onclick="setActiveUser('Keme')" class="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold transition">
+                        🌿 Keme
+                    </button>
+                </div>
+
+                <!-- Browser Notifications Permission Button -->
+                <button onclick="requestNotificationPermission()" id="notifBtn" title="تفعيل إشعارات المتصفح"
+                    class="w-10 h-10 rounded-2xl bg-sunlight-200 dark:bg-forest-800 text-forest-800 dark:text-sunlight-300 hover:bg-sunlight-300 flex items-center justify-center transition shadow-sm">
+                    <i class="fa-solid fa-bell"></i>
+                </button>
+
+                <!-- Night Forest Fireflies Mode Toggle -->
+                <button onclick="toggleNightForest()" id="themeToggleBtn" title="وضع غابة الليل واليراعات"
+                    class="px-3.5 h-10 rounded-2xl bg-forest-700 dark:bg-sunlight-400 text-white dark:text-forest-950 font-bold text-xs sm:text-sm flex items-center gap-2 transition shadow-sm">
+                    <i id="themeIcon" class="fa-solid fa-moon"></i>
+                    <span class="hidden sm:inline" id="themeText">غابة الليل</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- ========================================== -->
+        <!-- 3. LOVE COUNTERS & BIRTHDAYS SECTION       -->
+        <!-- ========================================== -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Day-by-Day Love Counter Card -->
+            <div class="lg:col-span-7 forest-glass rounded-3xl p-6 sm:p-7 shadow-lg border-t-4 border-forest-500 relative overflow-hidden">
+                <div class="absolute -left-6 -bottom-6 text-forest-500/10 text-9xl pointer-events-none">
+                    <i class="fa-solid fa-seedling"></i>
+                </div>
+
+                <div class="flex items-center justify-between mb-3">
+                    <span class="px-3 py-1 rounded-full bg-forest-100 dark:bg-forest-800 text-forest-700 dark:text-forest-200 text-xs font-bold">
+                        <i class="fa-solid fa-calendar-heart ml-1 text-blossom-500"></i> تاريخنا المعلن: 19 / 11 / 2026
+                    </span>
+                    <button onclick="openWelcomeModal()" class="text-xs font-bold text-blossom-500 hover:underline">
+                        <i class="fa-solid fa-envelope-open-text ml-1"></i> رسالة حب فورية
+                    </button>
+                </div>
+
+                <h2 id="mainCounterTitle" class="text-xl sm:text-2xl font-extrabold text-forest-800 dark:text-sunlight-200 mb-4">
+                    أيام حبنا يوم ورا يوم
+                </h2>
+
+                <!-- Live Digital Counter Grid -->
+                <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center mb-5">
+                    <div class="bg-gradient-to-b from-forest-600 to-forest-700 text-white rounded-2xl p-3 sm:p-4 shadow-md">
+                        <div id="countDays" class="text-2xl sm:text-4xl font-extrabold text-sunlight-300">0</div>
+                        <div class="text-xs sm:text-sm text-forest-100 mt-1">يوم</div>
+                    </div>
+                    <div class="bg-white/80 dark:bg-forest-800/90 border border-forest-200 dark:border-forest-700 rounded-2xl p-3 sm:p-4 shadow-sm">
+                        <div id="countHours" class="text-2xl sm:text-4xl font-extrabold text-forest-700 dark:text-blossom-300">0</div>
+                        <div class="text-xs sm:text-sm text-forest-600 dark:text-forest-300 mt-1">ساعة</div>
+                    </div>
+                    <div class="bg-white/80 dark:bg-forest-800/90 border border-forest-200 dark:border-forest-700 rounded-2xl p-3 sm:p-4 shadow-sm">
+                        <div id="countMinutes" class="text-2xl sm:text-4xl font-extrabold text-forest-700 dark:text-blossom-300">0</div>
+                        <div class="text-xs sm:text-sm text-forest-600 dark:text-forest-300 mt-1">دقيقة</div>
+                    </div>
+                    <div class="bg-white/80 dark:bg-forest-800/90 border border-forest-200 dark:border-forest-700 rounded-2xl p-3 sm:p-4 shadow-sm">
+                        <div id="countSeconds" class="text-2xl sm:text-4xl font-extrabold text-blossom-500">0</div>
+                        <div class="text-xs sm:text-sm text-forest-600 dark:text-forest-300 mt-1">ثانية</div>
+                    </div>
+                </div>
+
+                <!-- Secret Confession Counter (19/9) -->
+                <div class="bg-blossom-100/70 dark:bg-forest-900/80 border border-blossom-300/50 rounded-2xl p-3.5 flex items-center justify-between text-xs sm:text-sm">
+                    <span class="font-bold text-forest-800 dark:text-blossom-200">
+                        <i class="fa-solid fa-lock-open text-blossom-500 ml-1"></i> ومن يوم اعترافنا السري (19/9):
+                    </span>
+                    <span id="secretDaysCount" class="font-extrabold text-forest-700 dark:text-sunlight-300 bg-white dark:bg-forest-800 px-3 py-1 rounded-xl shadow-sm">
+                        55 يوم مع بعض
+                    </span>
+                </div>
+            </div>
+
+            <!-- Birthdays Card (Lome on top, Keme directly underneath) -->
+            <div class="lg:col-span-5 forest-glass rounded-3xl p-6 sm:p-7 shadow-lg border-t-4 border-blossom-400 flex flex-col justify-between">
+                <div>
+                    <h2 class="text-lg sm:text-xl font-extrabold text-forest-800 dark:text-sunlight-200 mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-cake-candles text-blossom-500"></i> أعياد ميلادنا
+                    </h2>
+
+                    <div class="space-y-4">
+                        <!-- Lome Birthday (Top) -->
+                        <div class="p-4 rounded-2xl bg-gradient-to-l from-blossom-100/90 to-white dark:from-forest-800 dark:to-forest-900 border-2 border-blossom-300 dark:border-blossom-400/40 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-english text-xl sm:text-2xl font-extrabold text-blossom-500 dark:text-blossom-300">Lome</span>
+                                    <span class="block text-sm font-bold text-forest-700 dark:text-forest-200 mt-0.5" dir="ltr">16 / 6 / 2007</span>
+                                </div>
+                                <div class="text-left">
+                                    <span class="text-xs text-forest-600 dark:text-forest-300 block">باقي لعيد ميلادها</span>
+                                    <span id="lomeBdayCountdown" class="inline-block mt-1 px-3 py-1 rounded-xl bg-blossom-500 text-white text-xs sm:text-sm font-extrabold shadow">
+                                        -- يوم
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Keme Birthday (Directly Underneath) -->
+                        <div class="p-4 rounded-2xl bg-gradient-to-l from-forest-100/90 to-white dark:from-forest-800 dark:to-forest-900 border-2 border-forest-400 dark:border-sunlight-400/40 shadow-sm">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <span class="font-english text-xl sm:text-2xl font-extrabold text-forest-700 dark:text-sunlight-300">Keme</span>
+                                    <span class="block text-sm font-bold text-forest-700 dark:text-forest-200 mt-0.5" dir="ltr">31 / 1 / 2007</span>
+                                </div>
+                                <div class="text-left">
+                                    <span class="text-xs text-forest-600 dark:text-forest-300 block">باقي لعيد ميلاده</span>
+                                    <span id="kemeBdayCountdown" class="inline-block mt-1 px-3 py-1 rounded-xl bg-forest-600 text-white text-xs sm:text-sm font-extrabold shadow">
+                                        -- يوم
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SOS Miss You Button (No last seen / next meeting timers) -->
+                <button onclick="triggerSOSMissYou()"
+                    class="mt-5 w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-blossom-400 via-blossom-500 to-sunlight-400 hover:opacity-95 text-white font-extrabold text-base shadow-lg hover:shadow-blossom-400/40 transition transform active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-heart-pulse text-xl animate-bounce"></i> زر طوارئ الاشتياق (SOS)
+                </button>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 4. LIVE MOOD SYNC (مقياس المزاج اللحظي)    -->
+        <!-- ========================================== -->
+        <section class="forest-glass rounded-3xl p-5 sm:p-6 shadow-md">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-lg sm:text-xl font-extrabold text-forest-800 dark:text-sunlight-200 flex items-center gap-2">
+                    <i class="fa-solid fa-face-smile-beam text-sunlight-500"></i> شو حاسين هلق؟ (مقياس المزاج)
+                </h2>
+                <span class="text-xs text-forest-500 dark:text-forest-300">بيوصل إشعار فوري للتاني</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Lome Mood -->
+                <div class="p-4 rounded-2xl bg-blossom-50/80 dark:bg-forest-900/70 border border-blossom-200 dark:border-forest-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-bold text-blossom-500 dark:text-blossom-300">🌸 مزاج Lome الحالي:</span>
+                        <span id="lomeCurrentMood" class="px-3 py-1 rounded-xl bg-white dark:bg-forest-800 text-sm font-extrabold shadow-sm">
+                            مشتاقتلك 🥹
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="updateMood('Lome', 'مشتاقتلك 🥹')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-blossom-200 text-xs font-bold transition shadow-sm">مشتاقتلك 🥹</button>
+                        <button onclick="updateMood('Lome', 'مبسوطة 🌸')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-blossom-200 text-xs font-bold transition shadow-sm">مبسوطة 🌸</button>
+                        <button onclick="updateMood('Lome', 'تعبانة 😴')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-blossom-200 text-xs font-bold transition shadow-sm">تعبانة 😴</button>
+                        <button onclick="updateMood('Lome', 'بدي احكي معك 💬')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-blossom-200 text-xs font-bold transition shadow-sm">بدي احكي معك 💬</button>
+                    </div>
+                </div>
+
+                <!-- Keme Mood -->
+                <div class="p-4 rounded-2xl bg-forest-100/70 dark:bg-forest-900/70 border border-forest-200 dark:border-forest-700">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="font-bold text-forest-700 dark:text-sunlight-300">🌿 مزاج Keme الحالي:</span>
+                        <span id="kemeCurrentMood" class="px-3 py-1 rounded-xl bg-white dark:bg-forest-800 text-sm font-extrabold shadow-sm">
+                            بفكر فيكِ 💭
+                        </span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="updateMood('Keme', 'بفكر فيكِ 💭')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-forest-200 text-xs font-bold transition shadow-sm">بفكر فيكِ 💭</button>
+                        <button onclick="updateMood('Keme', 'مشتقلك موت 🤍')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-forest-200 text-xs font-bold transition shadow-sm">مشتقلك موت 🤍</button>
+                        <button onclick="updateMood('Keme', 'رايق ومبسوط ☀️')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-forest-200 text-xs font-bold transition shadow-sm">رايق ومبسوط ☀️</button>
+                        <button onclick="updateMood('Keme', 'معك وجواتك 🌿')" class="px-2.5 py-1.5 rounded-xl bg-white dark:bg-forest-800 hover:bg-forest-200 text-xs font-bold transition shadow-sm">معك وجواتك 🌿</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 5. INTERACTIVE MEMORY CARDS & PHOTO ALBUM  -->
+        <!-- ========================================== -->
+        <section class="forest-glass rounded-3xl p-6 sm:p-7 shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-forest-800 dark:text-sunlight-200 flex items-center gap-2">
+                        <i class="fa-solid fa-images text-blossom-500"></i> بطاقات ذكرياتنا وصورنا المشتركة
+                    </h2>
+                    <p class="text-xs sm:text-sm text-forest-600 dark:text-forest-300 mt-1">
+                        نضيف ذكرياتنا ونرفع صورنا ونحفظها بأي وقت
+                    </p>
+                </div>
+                <button onclick="openAddMemoryModal()"
+                    class="py-2.5 px-5 rounded-2xl bg-forest-600 hover:bg-forest-500 text-white font-bold text-sm shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> إضافة ذكرى / صورة
+                </button>
+            </div>
+
+            <!-- Memories Grid -->
+            <div id="memoriesGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 6. TIME-LOCKED LETTERS (كبسولات الزمن)     -->
+        <!-- ========================================== -->
+        <section class="forest-glass rounded-3xl p-6 sm:p-7 shadow-lg border-t-4 border-sunlight-400">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-6">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-forest-800 dark:text-sunlight-200 flex items-center gap-2">
+                        <i class="fa-solid fa-hourglass-half text-sunlight-500"></i> رسائل مقفولة بالوقت (كبسولات الزمن)
+                    </h2>
+                    <p class="text-xs sm:text-sm text-forest-600 dark:text-forest-300 mt-1">
+                        رسائل ما بتفتح غير بالموعد المحدد — والكاتب بيقدر يفتحها، يعدلها، أو يغير وقتها بأي لحظة
+                    </p>
+                </div>
+                <button onclick="openLetterModal()"
+                    class="py-2.5 px-5 rounded-2xl bg-gradient-to-r from-sunlight-400 to-blossom-400 text-forest-950 font-extrabold text-sm shadow-md transition flex items-center gap-2">
+                    <i class="fa-solid fa-feather-pointed"></i> كتابة رسالة مقفولة
+                </button>
+            </div>
+
+            <div id="lettersGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Populated dynamically via JS -->
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- 7. WISH TREE (شجرة أمنياتنا)               -->
+        <!-- ========================================== -->
+        <section class="forest-glass rounded-3xl p-6 sm:p-7 shadow-lg">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-5">
+                <div>
+                    <h2 class="text-xl sm:text-2xl font-extrabold text-forest-800 dark:text-sunlight-200 flex items-center gap-2">
+                        <i class="fa-solid fa-tree text-forest-500"></i> شجرة أمنياتنا ومشاويرنا
+                    </h2>
+                    <p class="text-xs sm:text-sm text-forest-600 dark:text-forest-300 mt-1">
+                        كل أمنية بنعلقها على غصن، ولما نحققها سوا بنضويها
+                    </p>
+                </div>
+            </div>
+
+            <!-- Add Wish Form -->
+            <form id="wishForm" class="flex flex-col sm:flex-row gap-3 mb-6">
+                <input type="text" id="wishInput" required placeholder="اكتبي أمنية أو مشوار حابين نعمله سوا..."
+                    class="flex-1 py-3 px-4 rounded-2xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 focus:outline-none focus:border-forest-500 text-sm">
+                <button type="submit"
+                    class="py-3 px-6 rounded-2xl bg-forest-600 hover:bg-forest-500 text-white font-bold text-sm shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-leaf"></i> علّق الأمنية
+                </button>
+            </form>
+
+            <!-- Wishes List -->
+            <div id="wishesList" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <!-- Populated dynamically -->
+            </div>
+        </section>
+
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 8. FLOATING BACKGROUND MUSIC PLAYER        -->
+    <!-- ========================================== -->
+    <div id="musicPlayerBar" class="hidden fixed bottom-0 inset-x-0 z-30 bg-forest-900/95 backdrop-blur-xl border-t-2 border-sunlight-400/40 text-white px-4 py-3 shadow-2xl">
+        <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <!-- Current Song Info -->
+            <div class="flex items-center gap-3 min-w-0 flex-1">
+                <button onclick="togglePlayPause()" id="playPauseBtn"
+                    class="w-11 h-11 rounded-full bg-gradient-to-tr from-blossom-400 to-sunlight-300 text-forest-950 flex items-center justify-center text-lg font-bold shadow-lg flex-shrink-0 hover:scale-105 transition">
+                    <i id="playIcon" class="fa-solid fa-play"></i>
+                </button>
+                <div class="truncate">
+                    <div id="currentSongTitle" class="font-bold text-sm sm:text-base text-sunlight-200 truncate">
+                        وماله - عمرو دياب
+                    </div>
+                    <div id="currentSongArtist" class="text-xs text-forest-300 truncate">
+                        قائمة أغانينا الهادئة (1 / 3)
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls & Playlist Selector -->
+            <div class="flex items-center gap-2">
+                <button onclick="prevSong()" class="w-9 h-9 rounded-xl bg-forest-800 hover:bg-forest-700 flex items-center justify-center text-sm transition" title="السابقة">
+                    <i class="fa-solid fa-forward-step"></i>
+                </button>
+                <button onclick="nextSong()" class="w-9 h-9 rounded-xl bg-forest-800 hover:bg-forest-700 flex items-center justify-center text-sm transition" title="التالية">
+                    <i class="fa-solid fa-backward-step"></i>
+                </button>
+                
+                <!-- Playlist Dropdown -->
+                <select id="songSelector" onchange="selectSong(this.value)"
+                    class="bg-forest-800 border border-forest-600 rounded-xl px-2.5 py-2 text-xs sm:text-sm text-sunlight-100 max-w-[140px] sm:max-w-[200px] focus:outline-none">
+                </select>
+
+                <!-- Delete Custom Song Button (Shown only for uploaded songs) -->
+                <button id="deleteSongBtn" onclick="deleteCurrentSong()" title="إلغاء وحذف هذه الأغنية المضافة"
+                    class="hidden w-9 h-9 rounded-xl bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white border border-red-400/40 flex items-center justify-center text-sm transition">
+                    <i class="fa-solid fa-trash-can"></i>
+                </button>
+
+                <!-- Add Uploaded Songs Button -->
+                <button onclick="openAddSongModal()" title="رفع أغنية جديدة من الجهاز"
+                    class="px-3 py-2 rounded-xl bg-blossom-500 hover:bg-blossom-400 text-white text-xs sm:text-sm font-bold flex items-center gap-1.5 shadow transition">
+                    <i class="fa-solid fa-upload"></i> <span class="hidden sm:inline">رفع أغنية</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Hidden Audio Engines -->
+        <div id="ytPlayerContainer" class="hidden"></div>
+        <audio id="localAudioPlayer" class="hidden"></audio>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODALS (إضافة ذكرى / رسالة مقفولة / أغنية) -->
+    <!-- ========================================== -->
+
+    <!-- Modal 1: Add Memory & Photo Upload -->
+    <div id="addMemoryModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="max-w-md w-full forest-glass rounded-3xl p-6 shadow-2xl border border-forest-300 relative">
+            <button onclick="closeModal('addMemoryModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-forest-100 dark:bg-forest-800 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-forest-800 dark:text-sunlight-200 mb-4">
+                <i class="fa-solid fa-camera-retro text-blossom-500 ml-1"></i> إضافة ذكرى وصورة جديدة
+            </h3>
+            <form id="memoryForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold mb-1">عنوان الذكرى</label>
+                    <input type="text" id="memTitle" required placeholder="مثلاً: أول قهوة سوا..."
+                        class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">التاريخ</label>
+                        <input type="date" id="memDate" required
+                            class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">مين ضافها؟</label>
+                        <select id="memAuthor" class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm font-bold">
+                            <option value="Keme">Keme 🌿</option>
+                            <option value="Lome">Lome 🌸</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">شو صار بهاليوم؟</label>
+                    <textarea id="memText" rows="3" required placeholder="اكتب تفاصيل الذكرى من قلبك..."
+                        class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm"></textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">ارفع صورة للذكرى (اختياري)</label>
+                    <input type="file" id="memImageInput" accept="image/*"
+                        class="w-full text-xs p-2.5 rounded-xl bg-white/90 dark:bg-forest-900 border border-dashed border-forest-400">
+                </div>
+                <button type="submit" class="w-full py-3 rounded-2xl bg-forest-600 hover:bg-forest-500 text-white font-bold shadow-lg transition">
+                    حفظ الذكرى بموقعنا <i class="fa-solid fa-check mr-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 2: Create / Edit Time-Locked Letter -->
+    <div id="letterModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="max-w-md w-full forest-glass rounded-3xl p-6 shadow-2xl border border-sunlight-400 relative">
+            <button onclick="closeModal('letterModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-forest-100 dark:bg-forest-800 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 id="letterModalTitle" class="text-xl font-extrabold text-forest-800 dark:text-sunlight-200 mb-4">
+                <i class="fa-solid fa-envelope text-sunlight-500 ml-1"></i> رسالة مقفولة بالوقت
+            </h3>
+            <form id="letterForm" class="space-y-4">
+                <input type="hidden" id="editLetterId">
+                <div>
+                    <label class="block text-xs font-bold mb-1">عنوان الرسالة (يظهر من برا)</label>
+                    <input type="text" id="letterTitle" required placeholder="مثلاً: افتحيها ليلة راس السنة..."
+                        class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold mb-1">كاتب الرسالة</label>
+                        <select id="letterAuthor" class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm font-bold">
+                            <option value="Keme">Keme 🌿</option>
+                            <option value="Lome">Lome 🌸</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold mb-1">وقت الفتح المسموح</label>
+                        <input type="datetime-local" id="letterUnlockTime" required
+                            class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-xs">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">محتوى الرسالة السرية</label>
+                    <textarea id="letterBody" rows="4" required placeholder="اكتب كل اللي بقلبك هون..."
+                        class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm"></textarea>
+                </div>
+                <button type="submit" class="w-full py-3 rounded-2xl bg-gradient-to-r from-forest-600 to-blossom-500 text-white font-bold shadow-lg transition">
+                    قفل الرسالة وحفظها <i class="fa-solid fa-lock mr-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal 3: Read Letter Modal -->
+    <div id="readLetterModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+        <div class="max-w-lg w-full forest-glass rounded-3xl p-6 sm:p-8 shadow-2xl border-2 border-sunlight-400 relative">
+            <button onclick="closeModal('readLetterModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-forest-100 dark:bg-forest-800 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <span id="readLetterBadge" class="inline-block px-3 py-1 rounded-full bg-blossom-100 text-blossom-600 text-xs font-bold mb-2"></span>
+            <h3 id="readLetterTitle" class="text-2xl font-extrabold text-forest-800 dark:text-sunlight-300 mb-4"></h3>
+            <div class="bg-white/80 dark:bg-forest-950/80 p-5 rounded-2xl border border-forest-200 dark:border-forest-700 max-h-[60vh] overflow-y-auto">
+                <p id="readLetterContent" class="font-serif text-xl leading-relaxed whitespace-pre-line"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 4: Upload Local Audio Songs Only -->
+    <div id="addSongModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+        <div class="max-w-md w-full forest-glass rounded-3xl p-6 shadow-2xl border border-blossom-300 relative">
+            <button onclick="closeModal('addSongModal')" class="absolute top-4 left-4 w-9 h-9 rounded-full bg-forest-100 dark:bg-forest-800 flex items-center justify-center">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <h3 class="text-xl font-extrabold text-forest-800 dark:text-sunlight-200 mb-4">
+                <i class="fa-solid fa-music text-blossom-500 ml-1"></i> رفع أغنية جديدة لقائمتنا
+            </h3>
+            <form id="addSongForm" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold mb-1">اسم الأغنية والفنان</label>
+                    <input type="text" id="newSongTitle" required placeholder="مثلاً: تملي معاك - عمرو دياب"
+                        class="w-full p-3 rounded-xl bg-white/90 dark:bg-forest-900 border border-forest-300 dark:border-forest-600 text-sm">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold mb-1">اختيار الملف الصوتي من الجهاز (MP3 / Audio)</label>
+                    <input type="file" id="newSongFile" accept="audio/*" required
+                        class="w-full text-xs p-3 rounded-xl bg-white/90 dark:bg-forest-900 border-2 border-dashed border-forest-400 cursor-pointer">
+                </div>
+                <button type="submit" class="w-full py-3 rounded-2xl bg-blossom-500 hover:bg-blossom-400 text-white font-bold shadow-lg transition">
+                    رفع وتشغيل الأغنية <i class="fa-solid fa-play mr-1"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Custom Toast Notification Banner -->
+    <div id="toastBanner" class="fixed top-5 left-1/2 -translate-x-1/2 z-50 hidden bg-forest-900 text-white border border-sunlight-400 px-5 py-3 rounded-2xl shadow-2xl text-sm font-bold flex items-center gap-2 transition-all">
+        <i class="fa-solid fa-bell text-sunlight-400"></i>
+        <span id="toastText"></span>
+    </div>
+
+    <!-- YouTube IFrame API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+
+    <script>
+        /* =====================================================================
+           1. FIREBASE / CLOUD SYNC CONFIGURATION PLACEHOLDER
+           (Ready to plug in your Firebase credentials for real-time 2-phone sync)
+        ===================================================================== */
+        const FIREBASE_CONFIG = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "lome-keme-forest.firebaseapp.com",
+            databaseURL: "https://lome-keme-forest-default-rtdb.firebaseio.com",
+            projectId: "lome-keme-forest",
+            storageBucket: "lome-keme-forest.appspot.com"
+        };
+
+        /* =====================================================================
+           2. STATE MANAGEMENT & INITIAL DEFAULT DATA
+        ===================================================================== */
+        let activeUser = localStorage.getItem('lk_activeUser') || 'Lome';
+
+        // Default Pre-loaded Songs (Core 3 songs - non-deletable)
+        const defaultSongs = [
+            { id: 's1', title: 'وماله - عمرو دياب', type: 'youtube', videoId: '7B03e52f1_8', isCore: true },
+            { id: 's2', title: 'Set Fire to the Rain - Adele', type: 'youtube', videoId: 'Ri7-vnrJD3k', isCore: true },
+            { id: 's3', title: 'Ateşe Düştüm - Mert Demir', type: 'youtube', videoId: '18y7h-7b30s', isCore: true }
+        ];
+
+        // Default Starter Memory
+        const defaultMemories = [
+            {
+                id: 'm1',
+                title: 'بداية الحكاية بالسر 🌿',
+                date: '2026-09-19',
+                author: 'Keme',
+                text: 'اليوم اللي اعترفنا فيه لبعض، وبلشت أحلى قصة بحياتي كلها. سلام روحي إنتِ أماني وبيتي.',
+                image: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80'
+            }
+        ];
+
+        // Default Starter Time-Locked Letter
+        const defaultLetters = [
+            {
+                id: 'l1',
+                title: 'رسالة يوم إعلان حبنا قدام الكل (19/11) 💍',
+                author: 'Keme',
+                unlockTime: '2026-11-19T00:00',
+                body: 'يا لومي يا بنوتي وأميرتي، اليوم الكل عرف وشهد إنك إلي وإني إلك. وعد قدام الدنيا كلها إني ضل معك وبقلبك وجواتك طول العمر. بحبك روحي.',
+                forceUnlockedByAuthor: false
+            }
+        ];
+
+        // Default Starter Wishes
+        const defaultWishes = [
+            { id: 'w1', text: 'نتمشى سوا تحت المطر ونشرب قهوة دافية ☕🌧️', done: false },
+            { id: 'w2', text: 'نحتفل بذكرى حبنا الأولى سوا بأحلى مكان 🌸✨', done: false }
+        ];
+
+        let state = {
+            memories: JSON.parse(localStorage.getItem('lk_memories')) || defaultMemories,
+            letters: JSON.parse(localStorage.getItem('lk_letters')) || defaultLetters,
+            wishes: JSON.parse(localStorage.getItem('lk_wishes')) || defaultWishes,
+            songs: JSON.parse(localStorage.getItem('lk_songs')) || defaultSongs,
+            moods: JSON.parse(localStorage.getItem('lk_moods')) || { Lome: 'مشتاقتلك 🥹', Keme: 'بفكر فيكِ 💭' }
+        };
+
+        function saveState() {
+            localStorage.setItem('lk_memories', JSON.stringify(state.memories));
+            localStorage.setItem('lk_letters', JSON.stringify(state.letters));
+            localStorage.setItem('lk_wishes', JSON.stringify(state.wishes));
+            // Keep core songs in storage
+            const persistableSongs = state.songs.filter(s => s.isCore);
+            localStorage.setItem('lk_songs', JSON.stringify(persistableSongs));
+            localStorage.setItem('lk_moods', JSON.stringify(state.moods));
+        }
+
+        /* =====================================================================
+           3. LOCK SCREEN RIDDLE & PETAL RAIN ANIMATION
+        ===================================================================== */
+        document.getElementById('unlockForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const val = document.getElementById('passwordInput').value.trim();
+            // Accept 19/9, 19/09, 1909, 19-9
+            const validAnswers = ['19/9', '19/09', '1909', '19-9', '19-09', '19.9'];
+            if (validAnswers.includes(val)) {
+                document.getElementById('lockScreen').classList.add('hidden');
+                document.getElementById('mainContent').classList.remove('hidden');
+                document.getElementById('musicPlayerBar').classList.remove('hidden');
+                
+                spawnFallingPetals(35);
+                openWelcomeModal();
+                renderAll();
+            } else {
+                const err = document.getElementById('lockError');
+                err.classList.remove('hidden');
+                document.getElementById('passwordInput').classList.add('border-blossom-500');
+            }
+        });
+
+        function spawnFallingPetals(count = 25) {
+            const icons = ['🌸', '🌿', '🍃', '💛', '✨'];
+            for (let i = 0; i < count; i++) {
+                const el = document.createElement('div');
+                el.className = 'falling-particle text-2xl';
+                el.textContent = icons[Math.floor(Math.random() * icons.length)];
+                el.style.left = Math.random() * 100 + 'vw';
+                el.style.animationDuration = (Math.random() * 3 + 2.5) + 's';
+                el.style.animationDelay = (Math.random() * 1.5) + 's';
+                document.body.appendChild(el);
+                setTimeout(() => el.remove(), 6000);
+            }
+        }
+
+        /* =====================================================================
+           4. RHYTHMIC ROMANTIC MESSAGE GENERATOR & WELCOME MODAL
+        ===================================================================== */
+        const loveOpenings = [
+            "يا سلام روحي ونبض قلبي،",
+            "يا لومي يا بنوتي وأميرتي الحلوة،",
+            "يا وتيني ودلوعتي وأغلى من روحي،",
+            "يا أجمل صدفة وأحلى قدر بحياتي،",
+            "يا ملاذي الآمن وغابتي الهادية،"
+        ];
+
+        const loveMiddles = [
+            "تذكري دايماً إني معك بكل خطوة، وبقلبك وجواتك، وما رح اترك إيدك مهما صار.",
+            "كل يوم بيمرق وإنتِ معي بحس إنو الدنيا كلها ابتسمتلي وصارت أهدى وأحلى.",
+            "صوتك وضحكتك هنن الأمان الوحيد اللي برتاح فيه من تعب الدنيا كلها.",
+            "لو لفّيت الدنيا كلها ما رح لاقي روح تشبه طيبتك وحنيتك وجمال قلبك.",
+            "إنتِ مو بس حبيبتي، إنتِ بنتي ورفيقة عمري وكل شي حلو بتمناه بهالحياة."
+        ];
+
+        const loveClosings = [
+            "بحبك روحي قد السما وأكتر 🤍🌿",
+            "ضلي بخير كرمالي يا نبض كيمي 🌸✨",
+            "الله يديمك إلي نفس وروح طول العمر 💛",
+            "مشتقلك بكل ثانية بتمرق بدونك 🥹🤍"
+        ];
+
+        function generateNewLoveMessage() {
+            const o = loveOpenings[Math.floor(Math.random() * loveOpenings.length)];
+            const m = loveMiddles[Math.floor(Math.random() * loveMiddles.length)];
+            const c = loveClosings[Math.floor(Math.random() * loveClosings.length)];
+            
+            const nicknames = ["إلى لومي، بنوتي وأميرتي...", "إلى سلام روحي ودلوعتي...", "إلى نبض قلب كيمي..."];
+            document.getElementById('welcomeNickname').textContent = nicknames[Math.floor(Math.random() * nicknames.length)];
+            document.getElementById('generatedLoveMessage').textContent = `${o} ${m} ${c}`;
+        }
+
+        function openWelcomeModal() {
+            generateNewLoveMessage();
+            const modal = document.getElementById('welcomeModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeWelcomeModal() {
+            const modal = document.getElementById('welcomeModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        /* =====================================================================
+           5. LIVE LOVE COUNTERS & BIRTHDAY COUNTDOWNS
+        ===================================================================== */
+        function updateAllTimers() {
+            const now = new Date();
+            
+            // Main Public Love Date: 19/11/2026
+            const publicDate = new Date('2026-11-19T00:00:00');
+            const diffPublic = now - publicDate;
+
+            const titleEl = document.getElementById('mainCounterTitle');
+            let absDiff = Math.abs(diffPublic);
+
+            if (diffPublic < 0) {
+                titleEl.innerHTML = `<i class="fa-solid fa-hourglass-start text-blossom-500 ml-1"></i> باقي ليوم إعلان حبنا قدام الشلة والدنيا`;
+            } else {
+                titleEl.innerHTML = `<i class="fa-solid fa-heart text-blossom-500 ml-1"></i> أيام حبنا المعلن يوم ورا يوم`;
+            }
+
+            const days = Math.floor(absDiff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((absDiff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((absDiff / 1000 / 60) % 60);
+            const seconds = Math.floor((absDiff / 1000) % 60);
+
+            document.getElementById('countDays').textContent = days;
+            document.getElementById('countHours').textContent = hours;
+            document.getElementById('countMinutes').textContent = minutes;
+            document.getElementById('countSeconds').textContent = seconds;
+
+            // Secret Confession Counter (19/09/2026)
+            const secretDate = new Date('2026-09-19T00:00:00');
+            const secretDays = Math.max(1, Math.floor((now - secretDate) / (1000 * 60 * 60 * 24)));
+            document.getElementById('secretDaysCount').textContent = `${secretDays} يوم مع بعض بالقلب`;
+
+            // Birthdays Countdown
+            document.getElementById('lomeBdayCountdown').textContent = getNextBirthdayDays(6, 16) + ' يوم';
+            document.getElementById('kemeBdayCountdown').textContent = getNextBirthdayDays(1, 31) + ' يوم';
+        }
+
+        function getNextBirthdayDays(month, day) {
+            const now = new Date();
+            let year = now.getFullYear();
+            let bday = new Date(year, month - 1, day);
+            if (bday < now && bday.toDateString() !== now.toDateString()) {
+                bday = new Date(year + 1, month - 1, day);
+            }
+            const diff = bday - now;
+            return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)));
+        }
+
+        setInterval(updateAllTimers, 1000);
+        updateAllTimers();
+
+        /* =====================================================================
+           6. IDENTITY, MOODS, NOTIFICATIONS & SOS MISS YOU
+        ===================================================================== */
+        function setActiveUser(role) {
+            activeUser = role;
+            localStorage.setItem('lk_activeUser', role);
+
+            const lomeBtn = document.getElementById('roleLomeBtn');
+            const kemeBtn = document.getElementById('roleKemeBtn');
+
+            if (role === 'Lome') {
+                lomeBtn.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-blossom-500 text-white shadow transition';
+                kemeBtn.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-forest-700 dark:text-forest-200 transition';
+            } else {
+                kemeBtn.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold bg-forest-600 text-white shadow transition';
+                lomeBtn.className = 'px-3 py-1.5 rounded-xl text-xs sm:text-sm font-bold text-forest-700 dark:text-forest-200 transition';
+            }
+
+            // Re-render letters so author controls update dynamically
+            renderLetters();
+        }
+
+        function updateMood(person, moodText) {
+            state.moods[person] = moodText;
+            saveState();
+            renderMoods();
+            sendBrowserNotification(`تحديث مزاج ${person} 💌`, `${person} حالته هلق: ${moodText}`);
+        }
+
+        function renderMoods() {
+            document.getElementById('lomeCurrentMood').textContent = state.moods.Lome;
+            document.getElementById('kemeCurrentMood').textContent = state.moods.Keme;
+        }
+
+        function triggerSOSMissYou() {
+            spawnFallingPetals(45);
+            const sender = activeUser === 'Lome' ? 'لومي 🌸' : 'كيمي 🌿';
+            const receiver = activeUser === 'Lome' ? 'كيمي' : 'لومي';
+            sendBrowserNotification(`نداء اشتياق عاجل من ${sender} 💓`, `يا ${receiver}، ${sender} مشتقلك كتير بهاللحظة!`);
+        }
+
+        function requestNotificationPermission() {
+            if (!("Notification" in window)) {
+                showToast("متصفحك ما بيدعم الإشعارات، رح نعرضلك تنبيهات داخل الموقع.");
+                return;
+            }
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    showToast("تم تفعيل إشعارات المتصفح بنجاح! 🔔");
+                    new Notification("عالم Lome & Keme 🌿", { body: "الإشعارات شغالة وجاهزة بيناتكم!" });
+                } else {
+                    showToast("يرجى السماح بالإشعارات من إعدادات المتصفح.");
+                }
+            });
+        }
+
+        function sendBrowserNotification(title, body) {
+            showToast(`${title}: ${body}`);
+            if ("Notification" in window && Notification.permission === "granted") {
+                try {
+                    new Notification(title, { body });
+                } catch (e) {
+                    console.log("Notification fallback used.");
+                }
+            }
+        }
+
+        function showToast(msg) {
+            const banner = document.getElementById('toastBanner');
+            document.getElementById('toastText').textContent = msg;
+            banner.classList.remove('hidden');
+            setTimeout(() => banner.classList.add('hidden'), 4500);
+        }
+
+        /* =====================================================================
+           7. MEMORIES & PHOTO UPLOAD + DOWNLOAD
+        ===================================================================== */
+        function renderMemories() {
+            const grid = document.getElementById('memoriesGrid');
+            grid.innerHTML = state.memories.map(mem => `
+                <div class="bg-white/90 dark:bg-forest-900/90 rounded-3xl overflow-hidden border border-forest-200 dark:border-forest-700 shadow-md flex flex-col justify-between group">
+                    <div>
+                        ${mem.image ? `
+                        <div class="relative h-48 overflow-hidden bg-forest-100 dark:bg-forest-950">
+                            <img src="${mem.image}" alt="${mem.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <a href="${mem.image}" download="${mem.title}.jpg" title="تحميل الصورة"
+                                class="absolute bottom-3 left-3 w-9 h-9 rounded-full bg-forest-900/80 text-white hover:bg-blossom-500 flex items-center justify-center text-xs shadow transition">
+                                <i class="fa-solid fa-download"></i>
+                            </a>
+                        </div>` : ''}
+                        <div class="p-5">
+                            <div class="flex items-center justify-between text-xs text-forest-500 dark:text-forest-300 mb-2">
+                                <span><i class="fa-regular fa-calendar ml-1"></i> ${mem.date}</span>
+                                <span class="px-2.5 py-0.5 rounded-full ${mem.author === 'Lome' ? 'bg-blossom-100 text-blossom-600' : 'bg-forest-100 text-forest-700'} font-bold">
+                                    ${mem.author === 'Lome' ? '🌸 Lome' : '🌿 Keme'}
+                                </span>
+                            </div>
+                            <h3 class="font-extrabold text-lg text-forest-800 dark:text-sunlight-200 mb-2">${mem.title}</h3>
+                            <p class="text-sm text-forest-700 dark:text-forest-100 leading-relaxed">${mem.text}</p>
+                        </div>
+                    </div>
+                    <div class="px-5 pb-4 flex justify-end">
+                        <button onclick="deleteMemory('${mem.id}')" class="text-xs text-red-400 hover:text-red-600 transition">
+                            <i class="fa-solid fa-trash-can"></i> حذف
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function openAddMemoryModal() {
+            document.getElementById('memAuthor').value = activeUser;
+            document.getElementById('memDate').valueAsDate = new Date();
+            const modal = document.getElementById('addMemoryModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        document.getElementById('memoryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('memTitle').value.trim();
+            const date = document.getElementById('memDate').value;
+            const author = document.getElementById('memAuthor').value;
+            const text = document.getElementById('memText').value.trim();
+            const fileInput = document.getElementById('memImageInput');
+
+            const finalizeMemory = (imageDataUrl) => {
+                state.memories.unshift({
+                    id: 'm_' + Date.now(),
+                    title,
+                    date,
+                    author,
+                    text,
+                    image: imageDataUrl
+                });
+                saveState();
+                renderMemories();
+                closeModal('addMemoryModal');
+                this.reset();
+                spawnFallingPetals(20);
+                sendBrowserNotification(`ذكرى جديدة من ${author} 📸`, `تمت إضافة: "${title}"`);
+            };
+
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    finalizeMemory(event.target.result);
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            } else {
+                finalizeMemory(null);
+            }
+        });
+
+        function deleteMemory(id) {
+            state.memories = state.memories.filter(m => m.id !== id);
+            saveState();
+            renderMemories();
+        }
+
+        /* =====================================================================
+           8. TIME-LOCKED LETTERS (AUTHOR CAN UNLOCK, LOCK, EDIT & CHANGE TIME)
+        ===================================================================== */
+        function renderLetters() {
+            const grid = document.getElementById('lettersGrid');
+            const now = new Date();
+
+            grid.innerHTML = state.letters.map(letter => {
+                const unlockDate = new Date(letter.unlockTime);
+                const isTimeReached = now >= unlockDate;
+                const isOpenable = isTimeReached || letter.forceUnlockedByAuthor;
+                const isAuthor = (letter.author === activeUser);
+
+                const formattedDate = unlockDate.toLocaleString('ar-SY', {
+                    year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                });
+
+                return `
+                <div class="p-5 rounded-3xl border-2 ${isOpenable ? 'bg-white/95 dark:bg-forest-900/95 border-forest-400' : 'bg-forest-100/70 dark:bg-forest-950/80 border-sunlight-400/60'} shadow-md flex flex-col justify-between gap-4">
+                    <div>
+                        <div class="flex items-center justify-between gap-2 mb-2">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${letter.author === 'Lome' ? 'bg-blossom-100 text-blossom-600' : 'bg-forest-200 text-forest-800'}">
+                                بقلم: ${letter.author === 'Lome' ? '🌸 Lome' : '🌿 Keme'}
+                            </span>
+                            <span class="text-xs font-bold ${isOpenable ? 'text-forest-600 dark:text-forest-300' : 'text-blossom-500'}">
+                                <i class="fa-solid ${isOpenable ? 'fa-lock-open' : 'fa-lock'} ml-1"></i>
+                                ${isOpenable ? 'مفتوحة للقراءة' : 'مقفولة حتى: ' + formattedDate}
+                            </span>
+                        </div>
+                        <h3 class="text-lg font-extrabold text-forest-900 dark:text-sunlight-200">${letter.title}</h3>
+                    </div>
+
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-forest-200 dark:border-forest-800">
+                        ${isOpenable ? `
+                            <button onclick="readLetter('${letter.id}')" class="px-4 py-2 rounded-xl bg-forest-600 hover:bg-forest-500 text-white text-xs font-bold shadow transition">
+                                <i class="fa-solid fa-envelope-open ml-1"></i> اقرأ الرسالة
+                            </button>
+                        ` : `
+                            <span class="text-xs text-forest-500 dark:text-forest-400 italic">
+                                <i class="fa-regular fa-clock ml-1"></i> بانتظار الموعد المحدد...
+                            </span>
+                        `}
+
+                        <!-- AUTHOR EXCLUSIVE CONTROLS: Unlock/Lock manually, Edit text & Change Time -->
+                        ${isAuthor ? `
+                            <div class="flex items-center gap-1.5">
+                                <button onclick="toggleAuthorLock('${letter.id}')" title="فتح أو إعادة قفل الرسالة يدوياً"
+                                    class="px-2.5 py-1.5 rounded-xl bg-sunlight-200 hover:bg-sunlight-300 text-forest-900 text-xs font-bold transition">
+                                    <i class="fa-solid ${letter.forceUnlockedByAuthor ? 'fa-lock' : 'fa-key'}"></i>
+                                    ${letter.forceUnlockedByAuthor ? 'إعادة قفل' : 'فتح مبكر'}
+                                </button>
+                                <button onclick="editLetter('${letter.id}')" title="تعديل النص أو تغيير وقت الفتح"
+                                    class="px-2.5 py-1.5 rounded-xl bg-blossom-100 hover:bg-blossom-200 text-blossom-700 text-xs font-bold transition">
+                                    <i class="fa-solid fa-pen-to-square"></i> تعديل / وقت
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function openLetterModal() {
+            document.getElementById('editLetterId').value = '';
+            document.getElementById('letterModalTitle').innerHTML = `<i class="fa-solid fa-envelope text-sunlight-500 ml-1"></i> رسالة مقفولة بالوقت`;
+            document.getElementById('letterForm').reset();
+            document.getElementById('letterAuthor').value = activeUser;
+            const modal = document.getElementById('letterModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function editLetter(id) {
+            const letter = state.letters.find(l => l.id === id);
+            if (!letter || letter.author !== activeUser) return;
+
+            document.getElementById('editLetterId').value = letter.id;
+            document.getElementById('letterModalTitle').innerHTML = `<i class="fa-solid fa-pen text-blossom-500 ml-1"></i> تعديل الرسالة أو وقت الفتح`;
+            document.getElementById('letterTitle').value = letter.title;
+            document.getElementById('letterAuthor').value = letter.author;
+            document.getElementById('letterUnlockTime').value = letter.unlockTime;
+            document.getElementById('letterBody').value = letter.body;
+
+            const modal = document.getElementById('letterModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function toggleAuthorLock(id) {
+            const letter = state.letters.find(l => l.id === id);
+            if (!letter || letter.author !== activeUser) return;
+
+            letter.forceUnlockedByAuthor = !letter.forceUnlockedByAuthor;
+            saveState();
+            renderLetters();
+            showToast(letter.forceUnlockedByAuthor ? "تم فتح الرسالة يدوياً 🔓" : "تمت إعادة قفل الرسالة 🔒");
+        }
+
+        document.getElementById('letterForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const editId = document.getElementById('editLetterId').value;
+            const title = document.getElementById('letterTitle').value.trim();
+            const author = document.getElementById('letterAuthor').value;
+            const unlockTime = document.getElementById('letterUnlockTime').value;
+            const body = document.getElementById('letterBody').value.trim();
+
+            if (editId) {
+                const idx = state.letters.findIndex(l => l.id === editId);
+                if (idx !== -1) {
+                    state.letters[idx] = { ...state.letters[idx], title, author, unlockTime, body };
+                }
+                showToast("تم تحديث الرسالة وموعد فتحها بنجاح ✨");
+            } else {
+                state.letters.unshift({
+                    id: 'l_' + Date.now(),
+                    title,
+                    author,
+                    unlockTime,
+                    body,
+                    forceUnlockedByAuthor: false
+                });
+                sendBrowserNotification(`كبسولة زمن جديدة من ${author} ⏳`, `رسالة مقفولة بعنوان: "${title}"`);
+            }
+
+            saveState();
+            renderLetters();
+            closeModal('letterModal');
+        });
+
+        function readLetter(id) {
+            const letter = state.letters.find(l => l.id === id);
+            if (!letter) return;
+            document.getElementById('readLetterBadge').textContent = `رسالة من ${letter.author}`;
+            document.getElementById('readLetterTitle').textContent = letter.title;
+            document.getElementById('readLetterContent').textContent = letter.body;
+
+            const modal = document.getElementById('readLetterModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        /* =====================================================================
+           9. WISH TREE (شجرة أمنياتنا)
+        ===================================================================== */
+        document.getElementById('wishForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const input = document.getElementById('wishInput');
+            const text = input.value.trim();
+            if (!text) return;
+
+            state.wishes.unshift({ id: 'w_' + Date.now(), text, done: false });
+            saveState();
+            renderWishes();
+            input.value = '';
+            sendBrowserNotification(`أمنية جديدة على شجرتنا 🌳`, text);
+        });
+
+        function toggleWish(id) {
+            const wish = state.wishes.find(w => w.id === id);
+            if (wish) {
+                wish.done = !wish.done;
+                if (wish.done) spawnFallingPetals(20);
+                saveState();
+                renderWishes();
+            }
+        }
+
+        function renderWishes() {
+            const list = document.getElementById('wishesList');
+            list.innerHTML = state.wishes.map(w => `
+                <div onclick="toggleWish('${w.id}')" class="cursor-pointer p-4 rounded-2xl border transition flex items-center justify-between gap-3 ${w.done ? 'bg-sunlight-100/80 dark:bg-forest-800 border-sunlight-400' : 'bg-white/80 dark:bg-forest-900/80 border-forest-200 dark:border-forest-700 hover:border-forest-400'}">
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-full flex items-center justify-center text-xs ${w.done ? 'bg-sunlight-400 text-forest-950' : 'bg-forest-100 dark:bg-forest-800 text-forest-500'}">
+                            <i class="fa-solid ${w.done ? 'fa-star' : 'fa-leaf'}"></i>
+                        </div>
+                        <span class="text-sm font-bold ${w.done ? 'line-through text-forest-500 dark:text-forest-400' : ''}">${w.text}</span>
+                    </div>
+                    <span class="text-xs font-bold ${w.done ? 'text-forest-600 dark:text-sunlight-300' : 'text-forest-400'}">
+                        ${w.done ? 'تحققت ✨' : 'قريباً'}
+                    </span>
+                </div>
+            `).join('');
+        }
+
+        /* =====================================================================
+           10. MUSIC PLAYER (CORE 3 + UNLIMITED FILE UPLOADS + DELETE CUSTOM)
+        ===================================================================== */
+        let currentSongIndex = 0;
+        let isPlaying = false;
+        let ytPlayer = null;
+        let ytReady = false;
+
+        function onYouTubeIframeAPIReady() {
+            ytPlayer = new YT.Player('ytPlayerContainer', {
+                height: '0',
+                width: '0',
+                videoId: state.songs[0].videoId,
+                playerVars: { autoplay: 0, controls: 0, loop: 1 },
+                events: {
+                    onReady: () => {
+                        ytReady = true;
+                        ytPlayer.setVolume(45); // Calm gentle background volume
+                    },
+                    onStateChange: (event) => {
+                        if (event.data === YT.PlayerState.ENDED) nextSong();
+                    }
+                }
+            });
+        }
+
+        function renderPlaylistDropdown() {
+            const select = document.getElementById('songSelector');
+            select.innerHTML = state.songs.map((s, idx) => `
+                <option value="${idx}" ${idx === currentSongIndex ? 'selected' : ''}>${idx + 1}. ${s.title} ${s.isCore ? '' : '(مضافة)'}</option>
+            `).join('');
+            
+            const current = state.songs[currentSongIndex];
+            document.getElementById('currentSongTitle').textContent = current.title;
+            document.getElementById('currentSongArtist').textContent = `أغنية (${currentSongIndex + 1} من ${state.songs.length})`;
+
+            // Show delete button ONLY if the currently selected song is a user-uploaded song (not one of the core 3)
+            const deleteBtn = document.getElementById('deleteSongBtn');
+            if (current && !current.isCore) {
+                deleteBtn.classList.remove('hidden');
+            } else {
+                deleteBtn.classList.add('hidden');
+            }
+        }
+
+        function deleteCurrentSong() {
+            const current = state.songs[currentSongIndex];
+            if (!current || current.isCore) return;
+
+            const deletedTitle = current.title;
+            const localAudio = document.getElementById('localAudioPlayer');
+            localAudio.pause();
+            if (current.fileUrl) URL.revokeObjectURL(current.fileUrl);
+
+            state.songs.splice(currentSongIndex, 1);
+            currentSongIndex = Math.max(0, currentSongIndex - 1);
+            saveState();
+            selectSong(currentSongIndex);
+            showToast(`تم إلغاء وحذف الأغنية: ${deletedTitle} 🗑️`);
+        }
+
+        function togglePlayPause() {
+            const current = state.songs[currentSongIndex];
+            const localAudio = document.getElementById('localAudioPlayer');
+            const icon = document.getElementById('playIcon');
+
+            if (isPlaying) {
+                if (current.type === 'youtube' && ytReady) ytPlayer.pauseVideo();
+                localAudio.pause();
+                isPlaying = false;
+                icon.className = 'fa-solid fa-play';
+            } else {
+                if (current.type === 'youtube' && ytReady) {
+                    localAudio.pause();
+                    ytPlayer.playVideo();
+                } else if (current.type === 'file') {
+                    if (ytReady) ytPlayer.pauseVideo();
+                    localAudio.src = current.fileUrl;
+                    localAudio.volume = 0.45;
+                    localAudio.play();
+                }
+                isPlaying = true;
+                icon.className = 'fa-solid fa-pause';
+            }
+        }
+
+        function selectSong(index) {
+            currentSongIndex = parseInt(index);
+            const current = state.songs[currentSongIndex];
+            const localAudio = document.getElementById('localAudioPlayer');
+
+            if (ytReady) ytPlayer.stopVideo();
+            localAudio.pause();
+
+            renderPlaylistDropdown();
+
+            if (current.type === 'youtube' && ytReady) {
+                ytPlayer.loadVideoById(current.videoId);
+                isPlaying = true;
+                document.getElementById('playIcon').className = 'fa-solid fa-pause';
+            } else if (current.type === 'file') {
+                localAudio.src = current.fileUrl;
+                localAudio.volume = 0.45;
+                localAudio.play();
+                isPlaying = true;
+                document.getElementById('playIcon').className = 'fa-solid fa-pause';
+            }
+        }
+
+        function nextSong() {
+            const nextIdx = (currentSongIndex + 1) % state.songs.length;
+            selectSong(nextIdx);
+        }
+
+        function prevSong() {
+            const prevIdx = (currentSongIndex - 1 + state.songs.length) % state.songs.length;
+            selectSong(prevIdx);
+        }
+
+        function openAddSongModal() {
+            const modal = document.getElementById('addSongModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        document.getElementById('addSongForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const title = document.getElementById('newSongTitle').value.trim();
+            const fileInput = document.getElementById('newSongFile');
+
+            if (fileInput.files && fileInput.files[0]) {
+                const fileUrl = URL.createObjectURL(fileInput.files[0]);
+                state.songs.push({ id: 's_' + Date.now(), title, type: 'file', fileUrl, isCore: false });
+            } else {
+                showToast('يرجى اختيار ملف صوتي من جهازك.');
+                return;
+            }
+
+            saveState();
+            closeModal('addSongModal');
+            this.reset();
+            selectSong(state.songs.length - 1);
+            sendBrowserNotification(`أغنية جديدة انضافت 🎵`, title);
+        });
+
+        /* =====================================================================
+           11. NIGHT FOREST FIREFLIES MODE & UTILITIES
+        ===================================================================== */
+        function toggleNightForest() {
+            const html = document.documentElement;
+            const isDark = html.classList.toggle('dark');
+            const fireflies = document.getElementById('firefliesContainer');
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+
+            if (isDark) {
+                icon.className = 'fa-solid fa-sun';
+                text.textContent = 'نهار الغابة';
+                fireflies.classList.remove('hidden');
+                createFireflies();
+            } else {
+                icon.className = 'fa-solid fa-moon';
+                text.textContent = 'غابة الليل';
+                fireflies.classList.add('hidden');
+            }
+        }
+
+        function createFireflies() {
+            const container = document.getElementById('firefliesContainer');
+            if (container.children.length > 0) return;
+            for (let i = 0; i < 18; i++) {
+                const f = document.createElement('div');
+                f.className = 'firefly';
+                f.style.left = Math.random() * 100 + 'vw';
+                f.style.top = Math.random() * 100 + 'vh';
+                f.style.animationDelay = (Math.random() * 5) + 's';
+                container.appendChild(f);
+            }
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function renderAll() {
+            setActiveUser(activeUser);
+            renderMoods();
+            renderMemories();
+            renderLetters();
+            renderWishes();
+            renderPlaylistDropdown();
+        }
+    </script>
+</body>
+</html>
